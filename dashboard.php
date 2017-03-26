@@ -73,6 +73,7 @@
 			$playlists[$i][0] = $response->items[$i]->name;
 			$playlists[$i][1] = $response->items[$i]->id;
 			$playlists[$i][2] = $response->items[$i]->images[0]->url;
+			$playlists[$i][3] = $response->items[$i]->owner->id;
 			//echo "Playlist Name: " . $response->items[$i]->name . "<br>";
 		}
 
@@ -224,6 +225,23 @@
 			color:white;
 			transition: 0.3s ;
 		}
+		#logout{
+			font-family: "Montserrat";
+			font-weight: 700;
+			letter-spacing: 1px;
+			color:white !important;
+			padding:18px;
+			transition: 0.3s ;
+			text-decoration: none !important;
+		}#logout:hover{
+			color:rgba(1,1,1,0.2);
+			transition: 0.3s ;
+		}
+		#logout:target{
+			color:white;
+			transition: 0.3s ;
+		}
+
 
 	</style>
 </head>
@@ -235,10 +253,12 @@
 		<script>
 			$.alert({
 			    title: 'Alert!',
+			    color: 'red',
 			    content: '<?php echo $errorMsg; ?>',
 			});
 		</script>
 	<?php } ?>
+	<a id="logout" style="float:right;display:inline-block;text-align:right;position: absolute; top:10px; right:20px;" href="logout.php">Log Out</a>
 	<div class = "">
 		<center><img src = "http://www.chapelroswell.com/wp-content/uploads/2016/07/6274-spotify-logo-horizontal-white-rgb.png" style = "width:25%;margin-top:100px">
 		<h1 class = "title">CHOOSE YOUR PLAYLIST</h1></center>
@@ -253,7 +273,7 @@
 					
 					<div class = "playlist-holder">
 						<center>
-							<a class="album-image" onclick="showSongs('<?php echo $playlists[$j][1];?>')" href = "#" style="display:block; width: 150px; height: 150px; background-image: url(<?php echo $playlists[$j][2]; ?>); background-size: cover;background-position: center;" ></a>
+							<a class="album-image" onclick="showSongs('<?php echo $playlists[$j][1];?>', '<?php echo $playlists[$j][3]; ?>', '<?php echo $playlists[$j][0];?>')" href = "#" style="display:block; width: 150px; height: 150px; background-image: url(<?php echo $playlists[$j][2]; ?>); background-size: cover;background-position: center;" ></a>
 
 						</center>
 
@@ -280,7 +300,7 @@
 		</div>
 
 		<div class = "container" style = "margin-top: 100px;padding:25px">
-		<a style="float: right; display: inline-block;" id="download_button" class = "downloadbtn" href="#">DOWNLOAD</a>
+		<a style="float: right; display: inline-block;" onclick="downloadButton()" id="download_button" class = "downloadbtn" href="#">DOWNLOAD</a>
 		
 		 	<table style="width:100%;padding-bottom: 20px" id="songTable">
 			  <tr>
@@ -300,9 +320,23 @@
 
 	<script type="text/javascript">
 	var $jq = jQuery.noConflict();
-		function showSongs(playlistID){
+
+	function downloadButton(){
+		$jq.get($jq("#download_button").attr("custom"));
+		$jq.confirm({
+			    title: 'Success!',
+			    type: 'green',
+			    content: 'Your songs will be sent to the email linked to your Spotify account. Please allow 15-20 minutes for the file to arrive.',
+			    buttons:{
+			    	great: function (){}
+			    }
+		});
+	}
+
+		function showSongs(playlistID, owner, playlistName){
 			console.log(playlistID);
-			$jq.post( "/getPlaylistTracks.php", {'username': $jq("#username").val(), 'playlist_ID': playlistID})
+
+			$jq.post( "/getPlaylistTracks.php", {'username': owner, 'playlist_ID': playlistID})
 				.done(function( data ) {
 					$jq("#songTable").empty();
 					var headerTR = document.createElement("tr");
@@ -337,7 +371,7 @@
 
 						document.getElementById("songTable").appendChild(tr);
 
-						document.getElementById("download_button").setAttribute("href", "download.php?id="+ playlistID +"&aid=" + $jq("#access-token").val());
+						document.getElementById("download_button").setAttribute("custom", "download.php?playlistname="+ playlistName +"&spot="+ owner +"&id="+ playlistID +"&aid=" + $jq("#access-token").val());
 					}
 				});
 		}

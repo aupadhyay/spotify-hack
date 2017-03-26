@@ -1,9 +1,12 @@
 <?php 
 	$access_token = $_GET['aid'];
 	$playlist_id = $_GET['id'];
+	$spot_id = $_GET['spot'];
+	$playlist_name = $_GET['playlistname'];
+	//$email = $_GET['email'];
 
 	require("../configs/spotify.php");
-
+	require ('PHPMailer-master/PHPMailerAutoload.php');
 	$profilecURL = curl_init();
 
 	curl_setopt_array($profilecURL, array(
@@ -29,14 +32,16 @@
 	  echo "cURL Error #:" . $errProfile;
 	} else {
 	  $responseJSON = json_decode($responseProfile);
-	  $username = $responseJSON->id;
+	  $email = $responseJSON->email;
+	  //print_r($responseJSON);
+	  //$username = $responseJSON->id;
 	}
 
 
 	$curl = curl_init();
 
 	curl_setopt_array($curl, array(
-	  CURLOPT_URL => "https://api.spotify.com/v1/users/". $username ."/playlists/". $playlist_id ."/tracks",
+	  CURLOPT_URL => "https://api.spotify.com/v1/users/". $spot_id ."/playlists/". $playlist_id ."/tracks",
 	  CURLOPT_RETURNTRANSFER => true,
 	  CURLOPT_ENCODING => "",
 	  CURLOPT_MAXREDIRS => 10,
@@ -95,13 +100,13 @@
 		}
 
 		
-		$insertSQL = "INSERT INTO `users` (`email`, `folder_name`, `playlist_name`) VALUES ('abhi.upadhyay01@gmail.com','". $uniqueID ."','". $playlist_id ."')";
+		$insertSQL = "INSERT INTO `users` (`email`, `folder_name`, `playlist_name`) VALUES ('". $email ."','". $uniqueID ."','". $playlist_id ."')";
 
 		$result = mysqli_query($GLOBALS['con'], $insertSQL);
 
 		// Initialize archive objects
 		$zip = new ZipArchive();
-		$zip->open('moosik.zip', ZipArchive::CREATE | ZipArchive::OVERWRITE);
+		$zip->open($playlist_name . '.zip', ZipArchive::CREATE | ZipArchive::OVERWRITE);
 
 		// Create recursive directory iterator
 		/** @var SplFileInfo[] $files */
@@ -125,7 +130,43 @@
 		// Zip archive will be created only after closing object
 		$zip->close();
 
-		$file = 'moosik.zip';
+		$file = $playlist_name . '.zip';
+
+		//SEND EMAIL WITH THIS LINK 
+		$finalLink = "http://198.199.95.116/audio/" . $uniqueID . "/" . $file;
+
+
+
+		$mail = new PHPMailer;
+
+		//$mail->SMTPDebug = 3;                               // Enable verbose debug output
+
+		$mail->isSMTP();                                      // Set mailer to use SMTP
+		$mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
+		$mail->SMTPAuth = true;                               // Enable SMTP authentication
+		$mail->Username = 'spotifyhacksLOL@gmail.com';                 // SMTP username
+		$mail->Password = 'thisismypass';                           // SMTP password
+		$mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
+		$mail->Port = 587;                                    // TCP port to connect to
+
+		$mail->setFrom('spotifyhacksLOL@gmail.com', 'Spotify Hacks');
+		$mail->addAddress($email, 'Our friend');     // Add a recipient
+		$mail->addReplyTo('spotifyhacksLOL@gmail.com', 'Spotify Hacks');
+
+		$mail->isHTML(true);                                  // Set email format to HTML
+
+		$mail->Subject = 'Download Complete: Spotify Hacks';
+		$mail->Body    = 'Here\'s your link to download your <a href="'.$finalLink.'">playlist</a>' ;
+		$mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+
+		if(!$mail->send()) {
+		    //echo 'Message could not be sent.';
+		    //echo 'Mailer Error: ' . $mail->ErrorInfo;
+		} else {
+		    //echo 'Message has been sent';
+		}
+
+
 
 		if (file_exists($file)) {
 		    header('Content-Description: File Transfer');
@@ -138,6 +179,8 @@
 		    readfile($file);
 		    exit;
 		}
+
+		
 	}
 
 ?>
