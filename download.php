@@ -2,6 +2,7 @@
 	$access_token = $_GET['aid'];
 	$playlist_id = $_GET['id'];
 
+	require("../configs/spotify.php");
 
 	$profilecURL = curl_init();
 
@@ -56,8 +57,14 @@
 	if ($err) {
 	  echo "cURL Error #:" . $err;
 	} else {
+		$uniqueID = uniqid();
+		//echo $uniqueID;
+		mkdir("audio/" . $uniqueID, 0777);
+		$rootPath = realpath('audio/' . $uniqueID);
 		$response = json_decode($response);
 		$totalTracks = intval($response->total);
+		chdir('audio');
+		chdir($uniqueID );
 
 		for ($i=0; $i < $totalTracks; $i++) { 
 			$tracks[$i][0] = $response->items[$i]->track->artists[0]->name;
@@ -79,17 +86,20 @@
 		    	exit;
 		    }
 
-		    $tracks[$i][2] = "http://youtube.com/watch?v=" . $videoID;
 
+		    $tracks[$i][2] = "http://youtube.com/watch?v=" . $videoID;
 		    $output = shell_exec('youtube-dl --extract-audio --audio-format mp3 ' . $tracks[$i][2]);
 
 		    //print_r($output);
 
 		}
 
-		$rootPath = realpath('audio/');
+		
+		$insertSQL = "INSERT INTO `users` (`email`, `folder_name`, `playlist_name`) VALUES ('abhi.upadhyay01@gmail.com','". $uniqueID ."','". $playlist_id ."')";
 
-		// Initialize archive object
+		$result = mysqli_query($GLOBALS['con'], $insertSQL);
+
+		// Initialize archive objects
 		$zip = new ZipArchive();
 		$zip->open('moosik.zip', ZipArchive::CREATE | ZipArchive::OVERWRITE);
 
