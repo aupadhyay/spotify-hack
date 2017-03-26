@@ -68,7 +68,7 @@
 
 	<body>
 	<div class = "">
-		<center><img src = "http://www.chapelroswell.com/wp-content/uploads/2016/07/6274-spotify-logo-horizontal-white-rgb.png" style = "width:25%;margin-top:100px">
+		<center><img src = "white.png" style = "width:25%;margin-top:100px">
 		<h1 class = "title">START</h1>
 		<hr class = "spotifyhr">
 	

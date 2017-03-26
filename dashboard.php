@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <?php 
 	if(isset($_COOKIE['access-token'])){
 		$final_access = $_COOKIE['access-token'];
@@ -72,6 +71,8 @@
 
 		for ($i=0; $i < $total; $i++) {
 			$playlists[$i][0] = $response->items[$i]->name;
+			//$playlists[$i][0] = str_replace("'", "\'", $playlists[$i][0]);
+			$playlists[$i][0] = str_replace("\"", "&quot;", $playlists[$i][0]);
 			$playlists[$i][1] = $response->items[$i]->id;
 			$playlists[$i][2] = $response->items[$i]->images[0]->url;
 			$playlists[$i][3] = $response->items[$i]->owner->id;
@@ -261,12 +262,14 @@
 	<?php } ?>
 	<a id="logout" style="float:right;display:inline-block;text-align:right;position: absolute; top:10px; right:20px;" href="logout.php">Log Out</a>
 	<div class = "">
-		<center><img src = "http://www.chapelroswell.com/wp-content/uploads/2016/07/6274-spotify-logo-horizontal-white-rgb.png" style = "width:25%;margin-top:100px">
+		<center><img src = "white.png" style = "width:25%;margin-top:100px">
 		<h1 class = "title">CHOOSE YOUR PLAYLIST</h1></center>
 		<hr class = "spotifyhr">
 	</div>
 
 		<div class = "container">
+
+			<h2 style="color:white; text-align: center; font-size: 20px; font-family: 'Montserrat';font-weight: 300;line-height: 2em;">1. Select your desired playlist (must be owned by you - working on a fix)<br> 2. Hit Download! <br> 3. Check the email associated with your Spotify account in 10-15 minutes. <br></h2>
 
 			<div class = "row"><center>
 			<?php for($j=0; $j < count($playlists); $j++){ ?>
@@ -274,7 +277,7 @@
 					
 					<div class = "playlist-holder">
 						<center>
-							<a class="album-image" onclick="showSongs('<?php echo $playlists[$j][1];?>', '<?php echo $playlists[$j][3]; ?>', '<?php echo $playlists[$j][0];?>')" href = "#" style="display:block; width: 150px; height: 150px; background-image: url(<?php echo $playlists[$j][2]; ?>); background-size: cover;background-position: center;" ></a>
+							<a class="album-image" onclick="showSongs('<?php echo $playlists[$j][1];?>', '<?php echo $playlists[$j][3]; ?>', '<?php echo str_replace("'", "\'", $playlists[$j][0]);?>')" href = "#" style="display:block; width: 150px; height: 150px; background-image: url(<?php echo $playlists[$j][2]; ?>); background-size: cover;background-position: center;" ></a>
 
 						</center>
 
@@ -300,7 +303,7 @@
 			</div>
 		</div>
 
-		<div class = "container" style = "margin-top: 100px;padding:25px">
+		<div id="tableCont" class = "container" style = "display:none;margin-top: 100px;padding:25px">
 		<a style="float: right; display: inline-block;" onclick="downloadButton()" id="download_button" class = "downloadbtn" href="#">DOWNLOAD</a>
 		
 		 	<table style="width:100%;padding-bottom: 20px" id="songTable">
@@ -335,7 +338,9 @@
 	}
 
 		function showSongs(playlistID, owner, playlistName){
+			$jq("#tableCont").show();
 			console.log(playlistID);
+			playlistName = playlistName.replace(/'/g, "&#39;")
 
 			$jq.post( "/getPlaylistTracks.php", {'username': owner, 'playlist_ID': playlistID})
 				.done(function( data ) {

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <?php 
 	$access_token = $_GET['aid'];
 	$playlist_id = $_GET['id'];
@@ -138,7 +137,16 @@
 
 
 
+		$body = file_get_contents('/var/www/html/email-template.php');
+		$body = str_replace('$finalLink', $finalLink, $body);
+		$body = str_replace('$email', $email, $body);
+		$body = str_replace('$playlist_name', $playlist_name, $body);
+
+		$body = preg_replace('/\\\\/','', $body);
+
+
 		$mail = new PHPMailer;
+
 
 		//$mail->SMTPDebug = 3;                               // Enable verbose debug output
 
@@ -156,13 +164,14 @@
 
 		$mail->isHTML(true);                                  // Set email format to HTML
 
-		$mail->Subject = 'Download Complete: Spotify Hacks';
-		$mail->Body    = 'Here\'s your link to download your <a href="'.$finalLink.'">playlist</a>' ;
+		$mail->Subject = 'Download Complete: Spotify Hacks - ' . $playlist_name;
+		$mail->Body = $body;
+		//$mail->Body    = 'Here\'s your link to download your <a href="'.$finalLink.'">playlist</a>' ;
 		$mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
 
 		if(!$mail->send()) {
-		    //echo 'Message could not be sent.';
-		    //echo 'Mailer Error: ' . $mail->ErrorInfo;
+		    echo 'Message could not be sent.';
+		    echo 'Mailer Error: ' . $mail->ErrorInfo;
 		} else {
 		    //echo 'Message has been sent';
 		}
@@ -183,6 +192,5 @@
 
 		
 	}
-
 
 ?>
