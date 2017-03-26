@@ -1,35 +1,43 @@
 <?php 
-	$access = $_GET['code'];
+	if(isset($_COOKIE['access-token'])){
+		$final_access = $_COOKIE['access-token'];
+	}else if(isset($_GET['code'])){
+		$access = $_GET['code'];
 
-	$curl = curl_init();
+		$curl = curl_init();
 
-	curl_setopt_array($curl, array(
-	  CURLOPT_URL => "https://accounts.spotify.com/api/token",
-	  CURLOPT_RETURNTRANSFER => true,
-	  CURLOPT_ENCODING => "",
-	  CURLOPT_MAXREDIRS => 10,
-	  CURLOPT_TIMEOUT => 30,
-	  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-	  CURLOPT_CUSTOMREQUEST => "POST",
-	  CURLOPT_POSTFIELDS => "code=". $access ."&grant_type=authorization_code&redirect_uri=http:%2F%2F198.199.95.116%2Fdashboard.php&client_id=a800171b426d44a4b01da7d38e9970b4&client_secret=17a413563313492c9180eb350a46f881",
-	  CURLOPT_HTTPHEADER => array(
-	    "cache-control: no-cache",
-	    "content-type: application/x-www-form-urlencoded",
-	  ),
-	));
+		curl_setopt_array($curl, array(
+		  CURLOPT_URL => "https://accounts.spotify.com/api/token",
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 30,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "POST",
+		  CURLOPT_POSTFIELDS => "code=". $access ."&grant_type=authorization_code&redirect_uri=http:%2F%2F198.199.95.116%2Fdashboard.php&client_id=a800171b426d44a4b01da7d38e9970b4&client_secret=17a413563313492c9180eb350a46f881",
+		  CURLOPT_HTTPHEADER => array(
+		    "cache-control: no-cache",
+		    "content-type: application/x-www-form-urlencoded",
+		  ),
+		));
 
-	$response = curl_exec($curl);
-	$err = curl_error($curl);
+		$response = curl_exec($curl);
+		$err = curl_error($curl);
 
-	curl_close($curl);
+		curl_close($curl);
 
-	if ($err) {
-	  echo "cURL Error #:" . $err;
-	} else {
-		
-		$final_access = json_decode($response);
-		$final_access = $final_access->access_token;
+		if ($err) {
+		  echo "cURL Error #:" . $err;
+		} else {
+			
+			$final_access = json_decode($response);
+			$final_access = $final_access->access_token;
+		}
+	}else{
+		$errorMsg = "Invalid code. Make sure you log in through Spotify!";
 	}
+
+	setcookie("access-token",$final_access,time()+36000);
 
 
 	$getPlaylistsCURL = curl_init();
@@ -147,6 +155,17 @@
 	</style>
 </head>
 <body>
+	<script src="js/jquery.js"></script>
+	<link rel="stylesheet" href="css/jquery-confirm.min.css">
+	<script src="js/jquery-confirm.min.js"></script>
+	<?php if(isset($errorMsg)){ ?>
+		<script>
+			$.alert({
+			    title: 'Alert!',
+			    content: '<?php echo $errorMsg; ?>',
+			});
+		</script>
+	<?php } ?>
 	<div class = "">
 		<center><img src = "http://www.chapelroswell.com/wp-content/uploads/2016/07/6274-spotify-logo-horizontal-white-rgb.png" style = "width:25%;margin-top:100px">
 		<h1 class = "title">CHOOSE YOUR PLAYLIST</h1></center>
