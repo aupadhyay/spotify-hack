@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?php 
 	$access_token = $_GET['aid'];
 	$playlist_id = $_GET['id'];
@@ -182,5 +183,6 @@
 
 		
 	}
+
 
 ?>

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?php 
 	if(isset($_COOKIE['access-token'])){
 		$final_access = $_COOKIE['access-token'];
@@ -379,3 +380,4 @@
 	</script>
 </body>
 </html>
+

@@ -1,3 +1,4 @@
+
 <?php
 	unset($_COOKIE['access-token']);
 	setcookie('access-token', null, -1, '/');
