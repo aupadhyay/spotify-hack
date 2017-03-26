@@ -74,18 +74,6 @@
 
 	
 ?><!DOCTYPE html>
-
-<html>
-	<head></head>
-
-	<body>
-		
-			<a href=""></a>
-		
-	</body>
-</html>
-
-<!DOCTYPE html>
 <html>
 <head>
 	<title>SPOTIFY WEB HACK - GONE WRONG</title>
@@ -157,11 +145,11 @@
 
 			<div class = "row">
 			<?php for($j=0; $j < count($playlists); $j++){ ?>
-				<div class = "col-md-2">
+				<div class = "col-md-2-y">
 					
 					<div class = "playlist-holder">
 						<center>
-							<a href = "download.php?id=<?php echo $playlists[$j][1];?>&aid=<?php echo $final_access; ?>" ><img src = "<?php echo $playlists[$j][2]; ?>" class = "album-image"></a>
+							<a href = "download.php?id=<?php echo $playlists[$j][1];?>&aid=<?php echo $final_access; ?>" style="display:block; width: 100px; height: 100px; background-image: url(<?php echo $playlists[$j][2]; ?>); background-size: contain;" ></a>
 							<p class = "album-name"><?php echo $playlists[$j][0]; ?></p>
 
 						</center>
