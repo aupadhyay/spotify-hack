@@ -80,10 +80,44 @@
 	  //print_r(json_decode($response)->items[0]);
 	}
 
+	$profilecURL = curl_init();
+
+	curl_setopt_array($profilecURL, array(
+		CURLOPT_URL => "https://api.spotify.com/v1/me",
+		CURLOPT_RETURNTRANSFER => true,
+		CURLOPT_ENCODING => "",
+		CURLOPT_MAXREDIRS => 10,
+		CURLOPT_TIMEOUT => 30,
+		CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		CURLOPT_CUSTOMREQUEST => "GET",
+		CURLOPT_HTTPHEADER => array(
+		"cache-control: no-cache",
+		"content-type: application/x-www-form-urlencoded",
+		"Authorization: Bearer " . $final_access
+		),
+	));
+
+	$responseProfile = curl_exec($profilecURL);
+	$errProfile = curl_error($profilecURL);
+	curl_close($profilecURL);
+
+	if ($errProfile) {
+	  echo "cURL Error #:" . $errProfile;
+	} else {
+	  $responseJSON = json_decode($responseProfile);
+	  $username = $responseJSON->id;
+	}
+
 	
 ?><!DOCTYPE html>
 <html>
 <head>
+	<script
+  src="https://code.jquery.com/jquery-2.2.4.js"
+  integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
+  crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="css/jquery-confirm.min.css">
+	<script src="js/jquery-confirm.min.js"></script>
 	<title>SPOTIFY WEB HACK - GONE WRONG</title>
 	<!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -150,14 +184,53 @@
 			font-weight: 600;
 			font-size:16;
 			color:white;
+			border-bottom:1px solid;
+			padding:10px;
+			border-color:white
+		}
+		td{
+			font-family: "Montserrat";
+			font-weight: 300;
+			font-size:16;
+			color:white;
+			padding:10px;
+		}
+		.songnames{
+			border-bottom:1px solid;
+			border-color:#424242;
+		}
+
+		.downloadbtn{
+			font-family: "Montserrat";
+			font-weight: 700;
+			letter-spacing: 1px;
+			background-color:#1ABD55;
+			color:white !important;
+			border-radius: 25px;
+			padding:18px;
+			transition: 0.3s ;
+			text-decoration: none !important;
+
+		}
+		.downloadbtn:hover{
+			background-color:#0C5727;
+			text-decoration: none;
+			color:white;
+			transition: 0.3s ;
+		}
+		.downloadbtn:target{
+			background-color:#0C5727;
+			text-decoration: none;
+			color:white;
+			transition: 0.3s ;
 		}
 
 	</style>
 </head>
 <body>
-	<script src="js/jquery.js"></script>
-	<link rel="stylesheet" href="css/jquery-confirm.min.css">
-	<script src="js/jquery-confirm.min.js"></script>
+	<input type="hidden" value="<?php echo $username; ?>" id="username">
+	<input type="hidden" value="<?php echo $final_access; ?>" id="access-token">
+
 	<?php if(isset($errorMsg)){ ?>
 		<script>
 			$.alert({
@@ -180,7 +253,7 @@
 					
 					<div class = "playlist-holder">
 						<center>
-							<a class="album-image" href = "download.php?id=<?php echo $playlists[$j][1];?>&aid=<?php echo $final_access; ?>" style="display:block; width: 150px; height: 150px; background-image: url(<?php echo $playlists[$j][2]; ?>); background-size: cover;background-position: center;" ></a>
+							<a class="album-image" onclick="showSongs('<?php echo $playlists[$j][1];?>')" href = "#" style="display:block; width: 150px; height: 150px; background-image: url(<?php echo $playlists[$j][2]; ?>); background-size: cover;background-position: center;" ></a>
 
 						</center>
 
@@ -206,21 +279,69 @@
 			</div>
 		</div>
 
-		<div class = "container">
-		 	<table style="width:100%">
+		<div class = "container" style = "margin-top: 100px;padding:25px">
+		<a style="float: right; display: inline-block;" id="download_button" class = "downloadbtn" href="#">DOWNLOAD</a>
+		
+		 	<table style="width:100%;padding-bottom: 20px" id="songTable">
 			  <tr>
 			    <th>Song Name</th>
 			    <th>Artist</th> 
 			  </tr>
-			  <tr>
-			    <td>PassionFruit</td> 
-			    <td>Drake</td>
-			  </tr>
+
+
 
 			</table>
+
+			
 		</div>
 
 		
 	</div>
+
+	<script type="text/javascript">
+	var $jq = jQuery.noConflict();
+		function showSongs(playlistID){
+			console.log(playlistID);
+			$jq.post( "/getPlaylistTracks.php", {'username': $jq("#username").val(), 'playlist_ID': playlistID})
+				.done(function( data ) {
+					$jq("#songTable").empty();
+					var headerTR = document.createElement("tr");
+						var songName = document.createElement("th");
+						songName.innerHTML = "Song Name";
+
+						var songArtist = document.createElement("th");
+						songArtist.innerHTML = "Artist";
+
+						headerTR.appendChild(songName);
+						headerTR.appendChild(songArtist);
+
+					document.getElementById("songTable").appendChild(headerTR);
+
+					var response = JSON.parse(data);
+
+					for(var i =0; i < response.length; i++){
+						var tr = document.createElement("tr");
+						tr.setAttribute("class", "playlistsDiv");
+
+							var tdTrack = document.createElement("td");
+							tdTrack.innerHTML = response[i][1];
+							tdTrack.setAttribute("class", "songnames");
+
+							var tdName = document.createElement("td");
+							tdName.innerHTML = response[i][0];
+							tdName.setAttribute("class", "songnames");
+
+							tr.appendChild(tdTrack);
+							tr.appendChild(tdName);
+
+
+						document.getElementById("songTable").appendChild(tr);
+
+						document.getElementById("download_button").setAttribute("href", "download.php?id="+ playlistID +"&aid=" + $jq("#access-token").val());
+					}
+				});
+		}
+		
+	</script>
 </body>
 </html>
