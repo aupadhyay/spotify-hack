@@ -132,6 +132,11 @@
 			margin-top: -10px;
 		}
 
+		.col-md-2-y{
+			width:16%;
+			display: inline-block;
+		}
+
 	</style>
 </head>
 <body>
@@ -143,7 +148,7 @@
 
 		<div class = "container">
 
-			<div class = "row">
+			<div class = "row"><center>
 			<?php for($j=0; $j < count($playlists); $j++){ ?>
 				<div class = "col-md-2-y">
 					
@@ -157,7 +162,8 @@
 					</div>
 					
 				</div>
-				<?php } ?>
+
+				<?php } ?></center>
 			</div>
 		</div>
 
