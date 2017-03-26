@@ -61,13 +61,13 @@
 
 		for ($i=0; $i < $totalTracks; $i++) { 
 			$tracks[$i][0] = $response->items[$i]->track->artists[0]->name;
-			$tracks[$i][1] = $response->items[$i]->track->album->name;
+			$tracks[$i][1] = $response->items[$i]->track->name;
 
 		    $artistName = $tracks[$i][0];
 		    $songName = $tracks[$i][1];
 		    $searchString   = $artistName . " - " . $songName;
 		    $correctString  = str_replace(" ","+",$searchString);
-		    $youtubeUrl = "https://www.youtube.com/results?search_query=". $correctString . "&sp=CAMSAhAB";
+		    $youtubeUrl = "https://www.youtube.com/results?search_query=". $correctString . "&sp=EgIQAQ%253D%253D";
 		    $getHTML = file_get_contents($youtubeUrl);
 		    $pattern = '/<a href="\/watch\?v=(.*?)"/i';
 

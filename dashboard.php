@@ -137,6 +137,13 @@
 			display: inline-block;
 		}
 
+		th{
+			font-family: "Montserrat";
+			font-weight: 600;
+			font-size:16;
+			color:white;
+		}
+
 	</style>
 </head>
 <body>
@@ -178,6 +185,20 @@
 					<?php } ?></center>
 				</div>
 			</div>
+		</div>
+
+		<div class = "container">
+		 	<table style="width:100%">
+			  <tr>
+			    <th>Song Name</th>
+			    <th>Artist</th> 
+			  </tr>
+			  <tr>
+			    <td>PassionFruit</td> 
+			    <td>Drake</td>
+			  </tr>
+
+			</table>
 		</div>
 
 		
