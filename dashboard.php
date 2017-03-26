@@ -64,6 +64,7 @@
 		for ($i=0; $i < $total; $i++) {
 			$playlists[$i][0] = $response->items[$i]->name;
 			$playlists[$i][1] = $response->items[$i]->id;
+			$playlists[$i][2] = $response->items[$i]->images[0]->url;
 			//echo "Playlist Name: " . $response->items[$i]->name . "<br>";
 		}
 

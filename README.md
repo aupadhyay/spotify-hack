@@ -1,2 +1,2 @@
-# messenger-chrome
+# Spotify Hack
 Chrome Extension for Messenger
