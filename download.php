@@ -1,9 +1,10 @@
 <?php 
 	$access_token = $_GET['aid'];
 	$playlist_id = $_GET['id'];
+	$username = $_GET['uid'];
 
 	require("../configs/spotify.php");
-
+/*
 	$profilecURL = curl_init();
 
 	curl_setopt_array($profilecURL, array(
@@ -31,7 +32,7 @@
 	  $responseJSON = json_decode($responseProfile);
 	  $username = $responseJSON->id;
 	}
-
+*/
 
 	$curl = curl_init();
 
