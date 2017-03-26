@@ -67,7 +67,7 @@
 		    $songName = $tracks[$i][1];
 		    $searchString   = $artistName . " - " . $songName;
 		    $correctString  = str_replace(" ","+",$searchString);
-		    $youtubeUrl = "https://www.youtube.com/results?search_query=". $correctString;
+		    $youtubeUrl = "https://www.youtube.com/results?search_query=". $correctString . "&sp=CAMSAhAB";
 		    $getHTML = file_get_contents($youtubeUrl);
 		    $pattern = '/<a href="\/watch\?v=(.*?)"/i';
 
