@@ -154,7 +154,7 @@
 					
 					<div class = "playlist-holder">
 						<center>
-							<a href = "download.php?id=<?php echo $playlists[$j][1];?>&aid=<?php echo $final_access; ?>" style="display:block; width: 100px; height: 100px; background-image: url(<?php echo $playlists[$j][2]; ?>); background-size: contain;" ></a>
+							<a class="album-image" href = "download.php?id=<?php echo $playlists[$j][1];?>&aid=<?php echo $final_access; ?>" style="display:block; width: 150px; height: 150px; background-image: url(<?php echo $playlists[$j][2]; ?>); background-size: cover;background-position: center;" ></a>
 							<p class = "album-name"><?php echo $playlists[$j][0]; ?></p>
 
 						</center>
