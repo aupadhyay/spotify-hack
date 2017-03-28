@@ -1,11 +1,16 @@
 <?php 
-	$access_token = $_GET['aid'];
-	$playlist_id = $_GET['id'];
-	$spot_id = $_GET['spot'];
-	$playlist_name = $_GET['playlistname'];
+	require("../configs/spotify.php");
+	$email_pass = file_get_contents("../configs/email_pass");
+	$access_token = mysqli_escape_string($GLOBALS['con'], $_GET['aid']);
+	$playlist_id = mysqli_escape_string($GLOBALS['con'], $_GET['id']);
+	$spot_id = mysqli_escape_string($GLOBALS['con'], $_GET['spot']);
+	$playlist_name = mysqli_escape_string($GLOBALS['con'], $_GET['playlistname']);
+
+	echo $email_pass;
+
 	//$email = $_GET['email'];
 
-	require("../configs/spotify.php");
+	
 	require ('PHPMailer-master/PHPMailerAutoload.php');
 	$profilecURL = curl_init();
 
@@ -63,7 +68,6 @@
 	  echo "cURL Error #:" . $err;
 	} else {
 		$uniqueID = uniqid();
-		//echo $uniqueID;
 		mkdir("audio/" . $uniqueID, 0777);
 		$rootPath = realpath('audio/' . $uniqueID);
 		$response = json_decode($response);
@@ -154,7 +158,7 @@
 		$mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
 		$mail->SMTPAuth = true;                               // Enable SMTP authentication
 		$mail->Username = 'spotifyhacksLOL@gmail.com';                 // SMTP username
-		$mail->Password = 'thisismypass';                           // SMTP password
+		$mail->Password = $email_pass;                           // SMTP password
 		$mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
 		$mail->Port = 587;                                    // TCP port to connect to
 

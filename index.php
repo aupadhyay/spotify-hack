@@ -1,5 +1,6 @@
-
-<!DOCTYPE html>
+<?php
+	$client_id = file_get_contents("../configs/client_id");
+?><!DOCTYPE html>
 
 <html>
 	<head>
@@ -72,7 +73,7 @@
 		<h1 class = "title">START</h1>
 		<hr class = "spotifyhr">
 	
-		<a style="text-align:center; display: inline-block;" id="download_button" class = "downloadbtn" href="https://accounts.spotify.com/authorize/?client_id=a800171b426d44a4b01da7d38e9970b4&response_type=code&redirect_uri=http%3A%2F%2F198.199.95.116%2Fdashboard.php&scope=user-read-private%20user-read-email">LOG IN WITH SPOTIFY</a>
+		<a style="text-align:center; display: inline-block;" id="download_button" class = "downloadbtn" href="https://accounts.spotify.com/authorize/?client_id=<?php echo $client_id; ?>&response_type=code&redirect_uri=http%3A%2F%2F198.199.95.116%2Fdashboard.php&scope=user-read-private%20user-read-email">LOG IN WITH SPOTIFY</a>
 		</center>
 	</div>
 

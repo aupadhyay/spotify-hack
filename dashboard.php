@@ -1,11 +1,18 @@
-<?php 
+<?php
+	$client_id = file_get_contents("../configs/client_id", FILE_BINARY);
+	$client_id = preg_replace('/\s+/', ' ', $client_id);
+	$client_id = str_replace("\r\n", "\n", $client_id);
+	$client_secret = file_get_contents("../configs/client_secret", FILE_BINARY);
+	$client_secret = str_replace(' ','',$client_secret);
+	
+
+
 	if(isset($_COOKIE['access-token'])){
 		$final_access = $_COOKIE['access-token'];
 	}else if(isset($_GET['code'])){
 		$access = $_GET['code'];
 
 		$curl = curl_init();
-
 		curl_setopt_array($curl, array(
 		  CURLOPT_URL => "https://accounts.spotify.com/api/token",
 		  CURLOPT_RETURNTRANSFER => true,
@@ -14,7 +21,7 @@
 		  CURLOPT_TIMEOUT => 30,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "POST",
-		  CURLOPT_POSTFIELDS => "code=". $access ."&grant_type=authorization_code&redirect_uri=http:%2F%2F198.199.95.116%2Fdashboard.php&client_id=a800171b426d44a4b01da7d38e9970b4&client_secret=17a413563313492c9180eb350a46f881",
+		  CURLOPT_POSTFIELDS => "code=". $access ."&grant_type=authorization_code&redirect_uri=http:%2F%2F198.199.95.116%2Fdashboard.php&client_secret=". $client_secret ."&client_id=" . $client_id,
 		  CURLOPT_HTTPHEADER => array(
 		    "cache-control: no-cache",
 		    "content-type: application/x-www-form-urlencoded",
@@ -29,7 +36,7 @@
 		if ($err) {
 		  echo "cURL Error #:" . $err;
 		} else {
-			
+			//echo $response; 	
 			$final_access = json_decode($response);
 			$final_access = $final_access->access_token;
 		}
